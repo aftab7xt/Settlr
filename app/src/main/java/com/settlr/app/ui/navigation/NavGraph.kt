@@ -24,12 +24,16 @@ fun SettlrNavGraph(
     NavHost(
         navController = navController,
         startDestination = Routes.People,
-        modifier = modifier.padding(paddingValues)
+        modifier = modifier.padding(paddingValues),
+        enterTransition = { enterTransition },
+        exitTransition = { exitTransition },
+        popEnterTransition = { popEnterTransition },
+        popExitTransition = { popExitTransition }
     ) {
         composable(Routes.People) {
             PeopleScreen(
-                onPersonClick = { personId -> 
-                    navController.navigate(Routes.createContactDetailRoute(personId)) 
+                onPersonClick = { personId ->
+                    navController.navigate(Routes.createContactDetailRoute(personId))
                 }
             )
         }
