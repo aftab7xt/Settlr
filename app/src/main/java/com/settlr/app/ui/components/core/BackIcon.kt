@@ -1,4 +1,4 @@
-package com.settlr.app.ui.components
+package com.settlr.app.ui.components.core
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons

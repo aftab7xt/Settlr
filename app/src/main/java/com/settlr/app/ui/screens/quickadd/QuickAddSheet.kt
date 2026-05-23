@@ -40,9 +40,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.settlr.app.ui.components.BackIcon
-import com.settlr.app.ui.components.AmountChips
-import com.settlr.app.ui.components.PersonAvatar
+import com.settlr.app.ui.components.transaction.*
+import com.settlr.app.ui.components.feature.*
+import com.settlr.app.ui.components.core.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

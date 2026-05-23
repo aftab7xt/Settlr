@@ -1,4 +1,4 @@
-package com.settlr.app.ui.components
+package com.settlr.app.ui.components.transaction
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape

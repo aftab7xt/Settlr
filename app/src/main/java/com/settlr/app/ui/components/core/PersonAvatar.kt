@@ -1,4 +1,4 @@
-package com.settlr.app.ui.components
+package com.settlr.app.ui.components.core
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState

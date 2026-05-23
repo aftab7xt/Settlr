@@ -1,4 +1,4 @@
-package com.settlr.app.ui.components
+package com.settlr.app.ui.components.transaction
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring

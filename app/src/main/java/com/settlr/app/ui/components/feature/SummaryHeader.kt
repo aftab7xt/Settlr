@@ -1,4 +1,4 @@
-package com.settlr.app.ui.components
+package com.settlr.app.ui.components.feature
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,10 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import com.settlr.app.ui.components.BackIcon
-import com.settlr.app.ui.components.BalanceChip
-import com.settlr.app.ui.components.EntryCard
-import com.settlr.app.ui.components.PersonAvatar
+import com.settlr.app.ui.components.feature.*
+import com.settlr.app.ui.components.core.*
+import com.settlr.app.ui.components.transaction.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -102,16 +100,25 @@ fun ContactDetailScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(
-                items = entries,
-                key = { it.id }
-            ) { entry ->
-                person?.let { p ->
-                    EntryCard(
-                        entry = entry,
-                        personName = p.name,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+            item {
+                ConnectedCardGroup(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    entries.forEachIndexed { index, entry ->
+                        person?.let { p ->
+                            ConnectedCard(
+                                index = index,
+                                totalItems = entries.size
+                            ) {
+                                EntryCard(
+                                    entry = entry,
+                                    personName = p.name
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

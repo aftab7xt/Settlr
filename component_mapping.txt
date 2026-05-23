@@ -1,0 +1,26 @@
+=== activity ===
+ConnectedCard
+ConnectedCardGroup
+EntryCard
+
+=== contact_detail ===
+BackIcon
+BalanceChip
+ConnectedCard
+ConnectedCardGroup
+EntryCard
+PersonAvatar
+
+=== people ===
+BalanceChip
+ConnectedCard
+PersonAvatar
+SummaryHeader
+
+=== quickadd ===
+AmountChips
+BackIcon
+PersonAvatar
+
+=== you ===
+
