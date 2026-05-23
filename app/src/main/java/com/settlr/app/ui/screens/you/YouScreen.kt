@@ -1,6 +1,5 @@
 package com.settlr.app.ui.screens.you
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.settlr.app.ui.components.core.ConnectedCard
+import com.settlr.app.ui.components.core.ConnectedCardGroup
 import com.settlr.app.ui.theme.BalanceNegative
 import com.settlr.app.ui.theme.BalancePositive
 import com.settlr.app.ui.theme.RobotoFlex
@@ -59,196 +58,206 @@ fun YouScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Your Balance",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                val amountColor = when {
-                    netBalance > 0 -> BalancePositive
-                    netBalance < 0 -> BalanceNegative
-                    else -> MaterialTheme.colorScheme.onSurface
+        
+        // --- 1. BALANCE SECTION ---
+        ConnectedCardGroup {
+            ConnectedCard(index = 0, totalItems = 1) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Your Balance",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    val amountColor = when {
+                        netBalance > 0 -> BalancePositive
+                        netBalance < 0 -> BalanceNegative
+                        else -> MaterialTheme.colorScheme.onSurface
+                    }
+                    
+                    val prefix = if (netBalance < 0) "-" else ""
+                    
+                    Text(
+                        text = "$prefix${formatAmount(netBalance)}",
+                        style = MaterialTheme.typography.displaySmall.copy(
+                            fontFamily = RobotoFlex,
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = amountColor
+                    )
+                    
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
+                    val descriptor = when {
+                        netBalance > 0 -> "overall you're owed"
+                        netBalance < 0 -> "overall you owe"
+                        else -> "you're all settled up"
+                    }
+                    
+                    Text(
+                        text = descriptor,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-                
-                val prefix = if (netBalance < 0) "-" else ""
-                
-                Text(
-                    text = "$prefix${formatAmount(netBalance)}",
-                    style = MaterialTheme.typography.displaySmall.copy(
-                        fontFamily = RobotoFlex,
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = amountColor
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                val descriptor = when {
-                    netBalance > 0 -> "overall you're owed"
-                    netBalance < 0 -> "overall you owe"
-                    else -> "you're all settled up"
-                }
-                
-                Text(
-                    text = descriptor,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
 
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+        // --- 2. STATS SECTION ---
+        ConnectedCardGroup {
+            ConnectedCard(index = 0, totalItems = 1) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Total people tracked",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = people.size.toString(),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Active balances",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = activeBalancesCount.toString(),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                }
+            }
+        }
+
+        // --- 3. PREMIUM SETTINGS (GROUPED) ---
+        ConnectedCardGroup {
+            // Setting 1 (Top)
+            ConnectedCard(
+                index = 0,
+                totalItems = 2,
+                onClick = { }
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Total people tracked",
+                        text = "Auto Reminders",
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    Text(
-                        text = people.size.toString(),
-                        style = MaterialTheme.typography.titleMedium
+                    Spacer(modifier = Modifier.weight(1f))
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Text(
+                            text = "Premium",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Icon(
+                        imageVector = Icons.Rounded.Lock,
+                        contentDescription = "Premium Feature",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
+            }
+
+            // Setting 2 (Bottom)
+            ConnectedCard(
+                index = 1,
+                totalItems = 2,
+                onClick = { }
+            ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Active balances",
+                        text = "Export History",
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    Text(
-                        text = activeBalancesCount.toString(),
-                        style = MaterialTheme.typography.titleMedium
+                    Spacer(modifier = Modifier.weight(1f))
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Text(
+                            text = "Premium",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Icon(
+                        imageVector = Icons.Rounded.Lock,
+                        contentDescription = "Premium Feature",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         }
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+        // --- 4. PREMIUM BANNER ---
+        ConnectedCardGroup {
+            ConnectedCard(
+                index = 0,
+                totalItems = 1,
+                color = MaterialTheme.colorScheme.primaryContainer
             ) {
-                Text(
-                    text = "Auto Reminders",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialTheme.shapes.small
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Premium",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        text = "Settlr Premium",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Icon(
-                    imageVector = Icons.Rounded.Lock,
-                    contentDescription = "Premium Feature",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Export History",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialTheme.shapes.small
-                ) {
                     Text(
-                        text = "Premium",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        text = "Cloud sync, auto reminders & more",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Icon(
-                    imageVector = Icons.Rounded.Lock,
-                    contentDescription = "Premium Feature",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "Settlr Premium",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Text(
-                    text = "Cloud sync, auto reminders & more",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Button(
-                    onClick = { },
-                    enabled = false
-                ) {
-                    Text("Coming Soon")
+                    Button(
+                        onClick = { },
+                        enabled = false
+                    ) {
+                        Text("Coming Soon")
+                    }
                 }
             }
         }
