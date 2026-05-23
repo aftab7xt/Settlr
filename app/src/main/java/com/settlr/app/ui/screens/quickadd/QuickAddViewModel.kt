@@ -43,6 +43,10 @@ class QuickAddViewModel(
         _state.update { it.copy(selectedPersonId = personId) }
     }
 
+    fun clearSelectedPerson() {
+        _state.update { it.copy(selectedPersonId = null) }
+    }
+
     fun setAmount(amount: String) {
         _state.update { it.copy(amount = amount) }
     }

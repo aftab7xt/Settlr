@@ -17,6 +17,7 @@ import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -39,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.settlr.app.ui.components.BackIcon
 import com.settlr.app.ui.components.AmountChips
 import com.settlr.app.ui.components.PersonAvatar
 import kotlinx.coroutines.launch
@@ -153,10 +155,19 @@ fun QuickAddSheet(
             }
         } else {
             val selectedPerson = people.find { it.id == state.selectedPersonId }
-            Text(
-                text = "Logging with ${selectedPerson?.name ?: "..."}",
-                style = MaterialTheme.typography.titleLarge
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { viewModel.clearSelectedPerson() }) {
+                    BackIcon()
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Logging with ${selectedPerson?.name ?: "..."}",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
 
             TextField(
                 value = state.amount,
