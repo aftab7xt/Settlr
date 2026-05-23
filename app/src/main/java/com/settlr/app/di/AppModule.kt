@@ -27,5 +27,5 @@ val appModule = module {
     viewModel { ActivityViewModel(get()) }
     viewModel { YouViewModel(get()) }
     viewModel { QuickAddViewModel(get(), get()) }
-    viewModel { params -> ContactDetailViewModel(get(), get(), get(), params.get()) }
+    viewModel { ContactDetailViewModel(get(), get(), get(), get()) }
 }
