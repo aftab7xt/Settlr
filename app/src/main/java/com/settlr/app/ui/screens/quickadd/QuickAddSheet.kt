@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -26,6 +29,8 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -63,171 +69,203 @@ fun QuickAddSheet(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        if (state.selectedPersonId == null) {
-            Text(
-                text = "Who is this with?",
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                items(people, key = { it.id }) { person ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { viewModel.selectPerson(person.id) }
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+    Scaffold(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Quick Add",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            if (state.selectedPersonId != null) {
+                                viewModel.clearSelectedPerson()
+                            } else {
+                                onDismiss()
+                            }
+                        }
                     ) {
-                        PersonAvatar(
-                            name = person.name,
-                            avatarColor = person.avatarColor,
-                            size = 40.dp
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
+                        BackIcon()
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent
+                )
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding() + 16.dp
+                )
+                .imePadding(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (state.selectedPersonId == null) {
+                Text(
+                    text = "Who is this with?",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    items(people, key = { it.id }) { person ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { viewModel.selectPerson(person.id) }
+                                .padding(vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            PersonAvatar(
+                                name = person.name,
+                                avatarColor = person.avatarColor,
+                                size = 40.dp
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = person.name,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
+
+                var newPersonName by remember { mutableStateOf("") }
+                var showPremiumHint by remember { mutableStateOf(false) }
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SuggestionChip(
+                        onClick = { showPremiumHint = !showPremiumHint },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Rounded.AutoAwesome,
+                                contentDescription = "AI Input"
+                            )
+                        },
+                        label = { Text("Try: Rahul owes me 500") }
+                    )
+                    
+                    if (showPremiumHint) {
                         Text(
-                            text = person.name,
-                            style = MaterialTheme.typography.bodyLarge
+                            text = "AI input is a premium feature",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
                         )
                     }
                 }
-            }
 
-            var newPersonName by remember { mutableStateOf("") }
-            var showPremiumHint by remember { mutableStateOf(false) }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                SuggestionChip(
-                    onClick = { showPremiumHint = !showPremiumHint },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.AutoAwesome,
-                            contentDescription = "AI Input"
-                        )
-                    },
-                    label = { Text("Try: Rahul owes me 500") }
-                )
-                
-                if (showPremiumHint) {
-                    Text(
-                        text = "AI input is a premium feature",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                TextField(
-                    value = newPersonName,
-                    onValueChange = { newPersonName = it },
-                    placeholder = { Text("New person's name") },
-                    modifier = Modifier.weight(1f),
-                    singleLine = true
-                )
-                Button(
-                    onClick = {
-                        scope.launch {
-                            viewModel.createNewPerson(newPersonName)
-                        }
-                    },
-                    enabled = newPersonName.isNotBlank() && !state.isLoading
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("Add")
+                    TextField(
+                        value = newPersonName,
+                        onValueChange = { newPersonName = it },
+                        placeholder = { Text("New person's name") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true
+                    )
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                viewModel.createNewPerson(newPersonName)
+                            }
+                        },
+                        enabled = newPersonName.isNotBlank() && !state.isLoading
+                    ) {
+                        Text("Add")
+                    }
                 }
-            }
-        } else {
-            val selectedPerson = people.find { it.id == state.selectedPersonId }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { viewModel.clearSelectedPerson() }) {
-                    BackIcon()
-                }
-                Spacer(modifier = Modifier.width(8.dp))
+            } else {
+                val selectedPerson = people.find { it.id == state.selectedPersonId }
+                
                 Text(
                     text = "Logging with ${selectedPerson?.name ?: "..."}",
                     style = MaterialTheme.typography.titleLarge
                 )
-            }
 
-            TextField(
-                value = state.amount,
-                onValueChange = { viewModel.setAmount(it) },
-                textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                placeholder = { Text("0", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                TextField(
+                    value = state.amount,
+                    onValueChange = { viewModel.setAmount(it) },
+                    textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    placeholder = { Text("0", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
                 )
-            )
 
-            AmountChips(
-                onAmountSelected = { amount -> viewModel.setAmount(amount.toString()) },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+                AmountChips(
+                    onAmountSelected = { amount -> viewModel.setAmount(amount.toString()) },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
 
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                SegmentedButton(
-                    selected = state.isOwedToMe,
-                    onClick = { if (!state.isOwedToMe) viewModel.toggleDirection() },
-                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("They owe me")
-                }
-                SegmentedButton(
-                    selected = !state.isOwedToMe,
-                    onClick = { if (state.isOwedToMe) viewModel.toggleDirection() },
-                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
-                ) {
-                    Text("I owe them")
-                }
-            }
-
-            TextField(
-                value = state.note,
-                onValueChange = { viewModel.setNote(it) },
-                placeholder = { Text("What was this for? (Optional)") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = {
-                    scope.launch {
-                        viewModel.saveEntry()
+                    SegmentedButton(
+                        selected = state.isOwedToMe,
+                        onClick = { if (!state.isOwedToMe) viewModel.toggleDirection() },
+                        shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                    ) {
+                        Text("They owe me")
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = state.amount.isNotBlank() && !state.isLoading
-            ) {
-                Text("Save")
+                    SegmentedButton(
+                        selected = !state.isOwedToMe,
+                        onClick = { if (state.isOwedToMe) viewModel.toggleDirection() },
+                        shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+                    ) {
+                        Text("I owe them")
+                    }
+                }
+
+                TextField(
+                    value = state.note,
+                    onValueChange = { viewModel.setNote(it) },
+                    placeholder = { Text("What was this for? (Optional)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(
+                    onClick = {
+                        scope.launch {
+                            viewModel.saveEntry()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = state.amount.isNotBlank() && !state.isLoading
+                ) {
+                    Text("Save")
+                }
             }
         }
     }
