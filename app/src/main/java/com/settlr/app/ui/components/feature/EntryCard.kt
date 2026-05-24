@@ -17,9 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.settlr.app.data.model.Entry
-import com.settlr.app.util.formatTimestamp
 import com.settlr.app.ui.components.transaction.*
-import com.settlr.app.ui.components.feature.*
 import com.settlr.app.ui.components.core.*
 
 @Composable
@@ -61,30 +59,14 @@ fun EntryCard(
                 BalanceChip(amount = displayAmount)
             }
             
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (entry.note.isNotEmpty()) {
-                    Text(
-                        text = entry.note,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp)
-                    )
-                } else {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-                
+            if (entry.note.isNotEmpty()) {
                 Text(
-                    text = formatTimestamp(entry.timestamp),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = entry.note,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
