@@ -6,6 +6,7 @@ import com.settlr.app.data.repository.SettlrRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class YouViewModel(private val repository: SettlrRepository) : ViewModel() {
@@ -20,6 +21,22 @@ class YouViewModel(private val repository: SettlrRepository) : ViewModel() {
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
+    )
+
+    val totalOwedToMe: StateFlow<Double> = entries.map { entriesList ->
+        entriesList.filter { !it.isSettled && it.isOwedToMe }.sumOf { it.amount }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = 0.0
+    )
+
+    val totalYouOwe: StateFlow<Double> = entries.map { entriesList ->
+        entriesList.filter { !it.isSettled && !it.isOwedToMe }.sumOf { it.amount }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = 0.0
     )
 
     val netBalance: StateFlow<Double> = combine(people, entries) { _, currentEntries ->
